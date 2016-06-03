@@ -1,9 +1,11 @@
 package com.example.mezcaldev.leclima;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -52,9 +54,17 @@ public class ClimaFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
+        //TextView location_detail = (TextView) findViewById(R.id.location_text);
+
         if (id==R.id.action_refresh){
             FetchWeatherTask CheckWeather = new FetchWeatherTask();
-            CheckWeather.execute("Morelia,MX");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = prefs.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+            CheckWeather.execute(location);
+
+           // location_detail.setText(location);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -240,7 +250,7 @@ public class ClimaFragment extends Fragment {
                         .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                         .build();
 
-                //Log.v(LOG_TAG, "URi Construída: " + buildUri.toString());
+                Log.v(LOG_TAG, "URi Construída: " + buildUri.toString());
                 URL url = new URL(buildUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
