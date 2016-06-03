@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_text"
         android:id="@+id/detail_text"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp" />
 </RelativeLayout>
