@@ -259,7 +259,7 @@ public class ClimaFragment extends Fragment {
                         .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                         .build();
 
-                Log.v(LOG_TAG, "URi Construída: " + buildUri.toString());
+                //Log.v(LOG_TAG, "URi Construída: " + buildUri.toString());
                 URL url = new URL(buildUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
