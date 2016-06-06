@@ -8,12 +8,21 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- General settings -->
+    <!-- Header settings -->
     <string name="pref_header_general">General</string>
 
+    <!-- Location settings -->
     <string name="pref_location_title">Location</string>
-
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_default" translatable="false">Morelia,MX</string>
+
+    <!-- Units settings -->
+    <string name="pref_units_title">Unidades de temperatura</string>
+    <string name="pref_units_def">Metric</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
+    <string name="pref_units_metric" translatable="false">metric</string>
+    <string name="pref_units_imperial" translatable="false">imperial</string>
+    <string name="pref_units_key" translatable="false">units</string>
 
 </resources>

@@ -31,8 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -54,20 +52,27 @@ public class ClimaFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
-        //TextView location_detail = (TextView) findViewById(R.id.location_text);
-
         if (id==R.id.action_refresh){
-            FetchWeatherTask CheckWeather = new FetchWeatherTask();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = prefs.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
-            CheckWeather.execute(location);
-
-           // location_detail.setText(location);
-
+            actualizaClima();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void actualizaClima(){
+        //TextView location_detail = (TextView) findViewById(R.id.location_text);
+        FetchWeatherTask CheckWeather = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        CheckWeather.execute(location);
+        // location_detail.setText(location);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        actualizaClima();
     }
 
     @Override
@@ -76,22 +81,12 @@ public class ClimaFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.clima_fragment, container, false);
 
-        String[] forecast =  {
-                "Hoy: Día soleado - 33/16",
-                "Jueves: Probabilidad de lluvia - 28/14",
-                "Viernes: Marcha del CNTE - 32/15",
-                "Sábado: Soleado - 30/18",
-                "Domingo: Falta información - -/-"
-        };
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecast));
-
         mForeCastAdapter  =
                 new ArrayAdapter<String>(
                         getActivity(),
                         R.layout.list_item_forecast,
                         R.id.list_item_forecast_textview,
-                        weekForecast);
+                        new ArrayList<String>());
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForeCastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -121,7 +116,13 @@ public class ClimaFragment extends Fragment {
         /**
          * Prepare the weather high/lows for presentation.
          */
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low, String unitType) {
+            if (unitType.equals(getString(R.string.pref_units_imperial))){
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -169,6 +170,14 @@ public class ClimaFragment extends Fragment {
             dayTime = new Time();
 
             String[] resultStrs = new String[numDays];
+
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = sharedPrefs.getString(
+                    getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_metric)
+            );
+
             for(int i = 0; i < weatherArray.length(); i++) {
                 // For now, using the format "Day, description, hi/low"
                 String day;
@@ -196,7 +205,7 @@ public class ClimaFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+                highAndLow = formatHighLows(high, low, unitType);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
